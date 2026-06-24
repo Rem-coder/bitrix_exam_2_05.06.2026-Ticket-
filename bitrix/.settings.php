@@ -1,5 +1,6 @@
 <?php
-return array (
+
+return array (
   'cache_flags' => 
   array (
     'value' => 
@@ -21,7 +22,7 @@
   array (
     'value' => 
     array (
-      'debug' => false,
+      'debug' => true,
       'handled_errors_types' => 4437,
       'exception_errors_types' => 4437,
       'ignore_silence' => false,
