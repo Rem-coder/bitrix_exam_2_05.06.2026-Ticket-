@@ -5,7 +5,13 @@ if(!defined("ID_STATUS_AUTHOR_PUBLIC")){
 if(!defined("ID_IBLOCK_REVIEWS")){
     define("ID_IBLOCK_REVIEWS", 5);
 };
-if(!defined("SITE_ID")){
-    define("SITE_ID", "s1");
+if(!defined("ID_IBLOCK_STATUSES_USERS")){
+    define("ID_IBLOCK_STATUSES_USERS", 6);
 };
 
+if(!defined("MY_SITE_ID")){
+    define("MY_SITE_ID", "s1");
+};
+if(!defined("MAIL_EVENT")){
+    define("MAIL_EVENT", "EX2_AUTHOR_INFO");
+};
