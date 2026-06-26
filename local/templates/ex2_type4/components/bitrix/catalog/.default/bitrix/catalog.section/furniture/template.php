@@ -1,9 +1,10 @@
-<?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+use \Bitrix\Main\Localization\Loc;
+?>
 <div class="catalog-list">
 <?if($arParams["DISPLAY_TOP_PAGER"]):?>
 	<?=$arResult["NAV_STRING"]?><br />
 <?endif;?>
-
 
 <?
 foreach($arResult["ITEMS"] as $cell=>$arElement):
@@ -47,6 +48,15 @@ foreach($arResult["ITEMS"] as $cell=>$arElement):
 		<?=$arElement["PREVIEW_TEXT"]?>
 	</div>
 
+	<?if(!empty($arElement["REVIEWS_DATA"])):?>
+    <div>
+        <?=Loc::getMessage("REVIEWS_TITLE")?><br>
+        <?foreach($arElement["REVIEWS_DATA"] as $reviewName):?>
+            <?=$reviewName?><br>
+        <?endforeach?>
+    </div>
+	<?endif?>
+
 <?
 	foreach($arElement["PRICES"] as $code=>$arPrice):
 		if($arPrice["CAN_ACCESS"]):
@@ -56,7 +66,11 @@ foreach($arResult["ITEMS"] as $cell=>$arElement):
 		endif;
 	endforeach;
 ?>
+
+
 </div>
+
+
 <?
 endforeach; // foreach($arResult["ITEMS"] as $arElement):
 ?>

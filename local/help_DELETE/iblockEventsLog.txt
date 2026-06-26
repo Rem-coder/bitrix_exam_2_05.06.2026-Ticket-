@@ -1,0 +1,18 @@
+Array
+(
+    [ID] => 37
+    [~ID] => 37
+    [PROPERTY_AUTHOR_VALUE] => 1
+    [~PROPERTY_AUTHOR_VALUE] => 1
+    [PROPERTY_AUTHOR_VALUE_ID] => 163
+    [~PROPERTY_AUTHOR_VALUE_ID] => 163
+)
+Array
+(
+    [ID] => 37
+    [~ID] => 37
+    [PROPERTY_AUTHOR_VALUE] => 1
+    [~PROPERTY_AUTHOR_VALUE] => 1
+    [PROPERTY_AUTHOR_VALUE_ID] => 163
+    [~PROPERTY_AUTHOR_VALUE_ID] => 163
+)
