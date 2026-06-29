@@ -157,7 +157,6 @@ class MyUserEventHundlers{
             ]
         ]);
 
-        #file_put_contents($_SERVER["DOCUMENT_ROOT"]."/local/help_DELETE/hundlersUsers.txt", print_r($arFields["UF_AUTHOR_STATUS"], true), FILE_APPEND);
         return true;
     }
 
