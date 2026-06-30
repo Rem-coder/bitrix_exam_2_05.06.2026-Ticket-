@@ -18,6 +18,8 @@ $eventManager->addEventHandler("main", "OnAfterUserUpdate", ["MyUserEventHundler
 
 $eventManager->addEventHandler("search", "BeforeIndex", ["MyIndexHundlers","MyBeforeIndexHundler"]);
 
+$eventManager->addEventHandler("main", "OnBuildGlobalMenu", ["MyMenuHundlers","MyOnBuildGlobalMenuHundler"]);
+
 class MyIBlockEventsHundlers{
 
     private static ?string $oldAuthorId = null;
@@ -231,6 +233,52 @@ class MyIndexHundlers{
         file_put_contents($_SERVER["DOCUMENT_ROOT"]."/local/help_DELETE/index_log.txt", print_r($arFields["TITLE"], true), FILE_APPEND);
 
         return $arFields;
+    }
+
+}
+
+class MyMenuHundlers{
+
+    public static function MyOnBuildGlobalMenuHundler(&$aGlobalMenu, &$aModuleMenu){
+
+        global $USER;
+
+        $currentUserGroups = $USER->GetUserGroupArray();
+
+        if(!in_array(ID_USER_GROUP_CONTENTS_REDACTOR, $USER->GetUserGroupArray())){
+            return;
+        }
+
+        foreach($aGlobalMenu as $key => $value){
+            if($value["menu_id"] == ID_MENU_CONTENT){
+                continue;
+            };
+            unset($aGlobalMenu[$key]);
+        }
+
+        foreach($aModuleMenu as $key => $value){
+            if($value["parent_menu"] == ID_PATENT_MENU_CONTENT){
+                continue;
+            };
+            unset($aModuleMenu[$key]);
+        }
+
+        $aGlobalMenu["global_menu_fast_page"] = [
+            "menu_id" => "fast_page",
+            "text" => Loc::getMessage("TITLE_FAST_MENU"),
+            "title" => Loc::getMessage("TITLE_FAST_MENU"),
+            "sort" => 200,
+            "items_id" => "global_menu_fast_page",
+            "items" => [
+                0 => [
+                    "text" => Loc::getMessage("TEXT_BUTTON_ONE"),
+                    "url" => "https://test1" 
+                ],
+                1 => [
+                    "text" => Loc::getMessage("TEXT_BUTTON_TWO"),
+                    "url" => "https://test2" 
+                ]]
+        ];
     }
 
 }
