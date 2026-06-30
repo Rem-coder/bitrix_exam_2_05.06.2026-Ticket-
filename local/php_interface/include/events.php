@@ -4,6 +4,7 @@ use \Bitrix\Main\Localization\Loc;
 use \Bitrix\Main\UserTable;
 use \Bitrix\Iblock\ElementTable;
 use \Bitrix\Main\Mail\Event;
+use \Bitrix\Main\Loader;
 
 $eventManager = EventManager::getInstance();
 
@@ -14,6 +15,8 @@ $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ["MyIBloc
 
 $eventManager->addEventHandler("main", "OnBeforeUserUpdate", ["MyUserEventHundlers","MyOnBeforeUserUpdateHundler"]);
 $eventManager->addEventHandler("main", "OnAfterUserUpdate", ["MyUserEventHundlers","MyOnAfterUserUpdateHundler"]);
+
+$eventManager->addEventHandler("search", "BeforeIndex", ["MyIndexHundlers","MyBeforeIndexHundler"]);
 
 class MyIBlockEventsHundlers{
 
@@ -161,5 +164,73 @@ class MyUserEventHundlers{
     }
 
 
+
+}
+
+class MyIndexHundlers{
+    
+    private static ?array $arLoginsAuthors = null;
+
+    private static function setArLoginsAuthors(){
+
+        if(!Loader::includeModule("iblock")){
+            self::$arLoginsAuthors = [];
+            return;
+        }
+
+        $arUsers = [];
+        $arReviews = [];
+
+        $resReviews = CIBlockElement::GetList(
+            [],
+            ["ACTIVE" => "Y", "IBLOCK_ID" => ID_IBLOCK_REVIEWS],
+            false,
+            false,
+            ["ID", "PROPERTY_AUTHOR"]
+        );
+
+        while($val = $resReviews->GetNext()){
+            $arReviews[$val["ID"]] = $val["PROPERTY_AUTHOR_VALUE"];
+        }
+
+        if(empty($arReviews)){
+            self::$arLoginsAuthors = [];
+            return;
+        }
+
+        $resUsers = UserTable::getList([
+            'select' => ["ID", "LOGIN"],
+            'filter' => ["ID" => array_unique($arReviews)] 
+       ]);
+
+        while($val = $resUsers->fetch()){
+            $arUsers[$val["ID"]] = $val["LOGIN"];
+        }
+
+        foreach($arReviews as $key => $value){
+            self::$arLoginsAuthors[$key] = empty($arUsers[$value]) ? Loc::getMessage("EMPTY_AUTHOR") :$arUsers[$value];
+        }
+        
+    }
+
+    public static function MyBeforeIndexHundler($arFields){
+       
+        if(self::$arLoginsAuthors === null){
+            self::setArLoginsAuthors();
+        }
+
+        if($arFields["PARAM2"] != ID_IBLOCK_REVIEWS 
+        || $arFields["MODULE_ID"] != "iblock" 
+        || substr($arFields["ITEM_ID"], 0, 1) == 'S' 
+        || empty(self::$arLoginsAuthors)){
+            return $arFields;
+        }
+
+        $arFields["TITLE"] = $arFields["TITLE"]." ".self::$arLoginsAuthors[$arFields["ITEM_ID"]];
+
+        file_put_contents($_SERVER["DOCUMENT_ROOT"]."/local/help_DELETE/index_log.txt", print_r($arFields["TITLE"], true), FILE_APPEND);
+
+        return $arFields;
+    }
 
 }
